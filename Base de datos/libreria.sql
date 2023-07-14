@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-07-2023 a las 04:00:19
+-- Tiempo de generación: 14-07-2023 a las 20:08:58
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 7.4.30
 
@@ -20,6 +20,18 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `libreria`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `administrador`
+--
+
+CREATE TABLE `administrador` (
+  `idAdmin` int(11) NOT NULL,
+  `NombreAdmin` varchar(45) NOT NULL,
+  `Password` varchar(45) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -57,6 +69,14 @@ CREATE TABLE `estadocopia` (
   `Nombre_estado` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `estadocopia`
+--
+
+INSERT INTO `estadocopia` (`Id_EstadoCopia`, `Nombre_estado`) VALUES
+(1, 'disponible'),
+(2, 'en prestamo');
+
 -- --------------------------------------------------------
 
 --
@@ -67,6 +87,15 @@ CREATE TABLE `estadoprestamo` (
   `Id_EstadoPrestamo` int(11) NOT NULL,
   `Nombre_estado` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `estadoprestamo`
+--
+
+INSERT INTO `estadoprestamo` (`Id_EstadoPrestamo`, `Nombre_estado`) VALUES
+(1, 'al dia'),
+(2, 'atrasada'),
+(3, 'cerrada');
 
 -- --------------------------------------------------------
 
@@ -129,6 +158,14 @@ CREATE TABLE `tipousuario` (
   `nombre` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `tipousuario`
+--
+
+INSERT INTO `tipousuario` (`Id_TipoUsuario`, `nombre`) VALUES
+(1, 'profesor'),
+(2, 'alumno');
+
 -- --------------------------------------------------------
 
 --
@@ -146,6 +183,12 @@ CREATE TABLE `usuario` (
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `administrador`
+--
+ALTER TABLE `administrador`
+  ADD PRIMARY KEY (`idAdmin`);
 
 --
 -- Indices de la tabla `autor`
@@ -220,6 +263,12 @@ ALTER TABLE `usuario`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `administrador`
+--
+ALTER TABLE `administrador`
+  MODIFY `idAdmin` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `autor`
 --
 ALTER TABLE `autor`
@@ -235,13 +284,13 @@ ALTER TABLE `copia`
 -- AUTO_INCREMENT de la tabla `estadocopia`
 --
 ALTER TABLE `estadocopia`
-  MODIFY `Id_EstadoCopia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id_EstadoCopia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `estadoprestamo`
 --
 ALTER TABLE `estadoprestamo`
-  MODIFY `Id_EstadoPrestamo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id_EstadoPrestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `libro`
@@ -265,7 +314,7 @@ ALTER TABLE `prestamo`
 -- AUTO_INCREMENT de la tabla `tipousuario`
 --
 ALTER TABLE `tipousuario`
-  MODIFY `Id_TipoUsuario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id_TipoUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
