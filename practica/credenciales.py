@@ -3,7 +3,7 @@ def get_credenciales():
         'host':'localhost',
         'user':'root',
         'password':'',
-        'database':'libreria1',
+        'database':'libreria',
         'port':'3307'
     }
     return credenciales
