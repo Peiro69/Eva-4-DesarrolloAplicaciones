@@ -3,8 +3,6 @@ class Autor:
         self.__nombre = nombre
         self.__apellido = apellido
         
-    def get_id_autor(self):
-        return self.__id_autor
     def set_id_autor(self,id_autor):
         self.__id_autor = id_autor
 
@@ -17,3 +15,8 @@ class Autor:
         return self.__apellido
     def set_apellido(self,apellido):
         self.__apellido = apellido
+
+
+    def __str__(self):
+        cadena = f"{self.__nombre} {self.__apellido}"
+        return cadena

@@ -43,7 +43,7 @@ def RegistrarUsuarios():
     o_tipo_usuario = dao.recuperarIDtipo(obj_tipo_usuario)
     a_tipo_usuario = o_tipo_usuario[0]
     
-    tipo_usuario = ValidarEntero(a_tipo_usuario[0])
+    tipo_usuario = a_tipo_usuario[0]
     print(tipo_usuario)
     
     us = Usuario(rut,nombre,telefono,tipo_usuario)
@@ -64,7 +64,7 @@ def RegistrarLibros_Autores_Copias():
     dao = DAO()
     
     id_libro = dao.registrarLibro(li)
-    print(id_libro)
+    print(f"{id_libro} olaa" )
     ca = Copia(cantidad_copias,1,id_libro)
     
     dao.registrarCopia(ca)
@@ -90,6 +90,14 @@ def RegistrarAutor():
     id = dao.registrarAutor(au)
     dao.registroLibroAutor(id_libro,id)
     print(id)
+
+def AsignarAutor(idautor):
+    global id_libro
+
+    dao = DAO()
+    dao.registroLibroAutor(id_libro,idautor)
+
+    pass
 
 
 
@@ -200,7 +208,7 @@ def RegistroLibro():
 
     ventana_libro.mainloop()
 
-def RegistroAutores():
+def RegistroAutores(id_libro):
     global ventana_autor,cajitanombre_autor,cajitaapellido_autor
 
     ventana_libro.destroy()
@@ -232,7 +240,9 @@ def RegistroAutores():
     pass
 
 def AsignacionAutores():
-    
+    global ventana_asignacion, listbox1, listbox2
+
+
     #ventana_libro.destroy()
 
     ventana_asignacion = tkinter.Tk()
@@ -241,16 +251,73 @@ def AsignacionAutores():
 
     listbox1 = tkinter.Listbox(ventana_asignacion)
     listbox1.grid(row=1,column=2)
-    boton_asignar = tkinter.Button(ventana_asignacion, text="Asignar Autor")
+
+
+    dao = DAO()
+    a = dao.recuperarAutores()
+    #print(type(a))
+    i = 0
+    for y in a:
+        listbox1.insert(i+1,y)
+        i += 1
+
+
+
+
+
+
+    
+    listbox2 = tkinter.Listbox(ventana_asignacion)
+    listbox2.grid(row=1,column=6)
+
+
+    def item_seleccionado():
+        for item in listbox1.curselection():
+            sel = listbox1.get(item)
+            i = 0
+            listbox2.insert(i+1,sel)
+            i += 1
+
+    def devolver_autor():
+        listbox2.delete(tkinter.ANCHOR)
+
+
+    boton_devolver = tkinter.Button(ventana_asignacion, text="Devolver Autor", command=devolver_autor)
+    boton_devolver.grid(row=1,column=5)
+
+    boton_asignar = tkinter.Button(ventana_asignacion, text="Asignar Autor", command= item_seleccionado)
     boton_asignar.grid(row=1,column=3)
 
 
-    boton_asignar = tkinter.Button(ventana_asignacion, text="Devolver Autor")
-    boton_asignar.grid(row=1,column=4)
-    listbox2 = tkinter.Listbox(ventana_asignacion)
-    listbox2.grid(row=1,column=5)
 
 
+
+
+    def tuplalb2(x):
+        o = ""
+        for a in x:
+            for i in a:
+                if i != " ":
+                    o += i
+                else:
+                    break
+        print(o)
+
+    def uwu():
+        x = listbox2.get(0,tkinter.END)
+        for l in x:
+            tuplalb2(l)
+
+
+
+
+
+#WHERE NOMBRE = %S AND APELLIDO = %S
+    
+
+
+    boton_a = tkinter.Button(ventana_asignacion, text="Asignar Autor", command= uwu)
+    boton_a.grid(row=3,column=4)
 
     ventana_asignacion.mainloop()
 
@@ -293,13 +360,15 @@ def Menu():
 
 
 
+
 #dao = DAO()
-#x = dao.recuperarAutores()
-#for a in x:
-#    id_autor = a[0]
-#    nombre = a[1]
-#    apellido = a[2]
-#    print(f"{id_autor} {nombre} {apellido}")
+#a = dao.recuperarAutores()
+#print(type(a))
+#for y in a:
+#    print(y)
+#    break
 
 
 AsignacionAutores()
+
+#LogIn()

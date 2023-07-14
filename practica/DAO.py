@@ -78,8 +78,14 @@ class DAO:
         sql = "SELECT * FROM autor"
         self.__cursor.execute(sql)
         o = self.__cursor.fetchall()
+        lista = []
+        for a in o:
+            autor = Autor(a[1],a[2])
+            autor.set_id_autor(a[0])
+            #print(autor)
+            lista.append(autor)
         self.cerrar()
-        return o
+        return lista
 
 
     
