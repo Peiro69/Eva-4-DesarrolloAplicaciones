@@ -18,5 +18,5 @@ class Autor:
 
 
     def __str__(self):
-        cadena = f"{self.__nombre} {self.__apellido}"
+        cadena = f"{self.__id_autor} {self.__nombre} {self.__apellido}"
         return cadena

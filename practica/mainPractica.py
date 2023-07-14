@@ -27,30 +27,27 @@ def ValidarEntero(campo:str,error:bool):
         except:
             messagebox.showerror("Intente nuevamente","Se debe ingresar un numero valido")
         
-  
+ 
 
 def RegistrarUsuarios():
     dao = DAO() 
     rut = cajitarut.get()
-    #print(rut)
     nombre = cajitanombre.get()
     telefono = cajitatelefono.get()
     e_tipo_usuario = cajitatipo.get().lower()
-    print(e_tipo_usuario)
     obj_tipo_usuario = TipoUsuario(e_tipo_usuario)
-    print(obj_tipo_usuario.get_nombre())
-
     o_tipo_usuario = dao.recuperarIDtipo(obj_tipo_usuario)
     a_tipo_usuario = o_tipo_usuario[0]
     
     tipo_usuario = a_tipo_usuario[0]
-    print(tipo_usuario)
     
     us = Usuario(rut,nombre,telefono,tipo_usuario)
     dao.registrarUsuario(us)
+    messagebox.showinfo("EXITOSO","Usuario Registrado Con Éxito")
+    ventana_usuario.destroy()
 
 def RegistrarLibros_Autores_Copias():
-    global id_libro
+    global id_libro, cant_autores
     
     titulo = cajitatitulo.get()
     error = False
@@ -64,20 +61,52 @@ def RegistrarLibros_Autores_Copias():
     dao = DAO()
     
     id_libro = dao.registrarLibro(li)
-    print(f"{id_libro} olaa" )
     ca = Copia(cantidad_copias,1,id_libro)
     
     dao.registrarCopia(ca)
 
 
     if cant_autores > 1:
-        AsignacionAutores()
+        AsignacionAutores(id_libro,cant_autores)
     elif cant_autores == 1:
-        RegistroAutores(id_libro)
+        AsignacionAutores(id_libro,cant_autores)
         
-
 def RegistrarPrestamo():
-    pass
+    
+    rutpres = cajitarutpres.get()
+    dao = DAO()
+    usuarios = dao.recuperarRUTUsuarios()
+    listaa = []
+    for x in usuarios:
+        listaa.append(x[0])
+    if rutpres in listaa:
+        messagebox.showinfo("Rut Valido","Puede ingresar el registro")
+        ventana_prestamo.destroy()
+        RegistroPrestamo2(rutpres)   
+    else:
+        messagebox.showerror("ERROR","Su rut no está registrado")
+
+def logear():
+    user = cajita_admin.get()
+    contrasenia = cajita_password.get()
+    dao = DAO()
+    credencialees = dao.recuperarAdmin()
+    listastr = []
+    for x in credencialees:
+        for y in x:
+            listastr.append(y)
+
+    if user == listastr[0] and contrasenia == listastr[1]:
+        messagebox.showinfo("Bienvenido","Bienvenido")
+        Menu()
+    else:
+        messagebox.showerror("ERROR","CREDENCIALES ERRONEAS")
+
+    
+
+
+
+
     
 def RegistrarAutor():
     global id_libro
@@ -85,19 +114,33 @@ def RegistrarAutor():
     apellido_autor = cajitaapellido_autor.get()
     au = Autor(nombre_autor,apellido_autor)
     dao = DAO()
-    print(f"el nombre del autor es: {au.get_nombre()}  {au.get_apellido()}")
-    print(f"hola: {cajitanombre_autor.get()}")
     id = dao.registrarAutor(au)
     dao.registroLibroAutor(id_libro,id)
-    print(id)
+    ventana_autor.destroy()
 
-def AsignarAutor(idautor):
-    global id_libro
+def AsignarAutor():
+    global id_libro, cant_autores
 
-    dao = DAO()
-    dao.registroLibroAutor(id_libro,idautor)
-
-    pass
+    x = listbox2.get(0,tkinter.END)
+    o = ""
+    listaaa = []
+    if len(x) == cant_autores:    
+        ind = 0
+        for l in x:
+            for a in l:
+                if a != " ":
+                    o += a
+                else:
+                    listaaa.append(o)
+                    o = ""
+                    break
+    else:
+        messagebox.showerror("Intente nuevamente","Debes ingresar la misma cantidad de autores que se mencionaron")
+    for idautor in listaaa:
+        dao = DAO()
+        dao.registroLibroAutor(id_libro,idautor)
+        messagebox.showinfo("EXITOSO","Libro Registrado Con Éxito")
+        ind += 1
 
 
 
@@ -125,7 +168,7 @@ def LogIn():
     cajita_admin.grid(row=1,column=3)
     cajita_password.grid(row=2,column=3)
     
-    boton = tkinter.Button(ventana_login, text="Ingresar",command=Menu)
+    boton = tkinter.Button(ventana_login, text="Ingresar",command=logear)
     boton.grid(row=5,column=3)
     titulo.grid(row=0,column=3)
     ventana_login.mainloop()
@@ -208,10 +251,10 @@ def RegistroLibro():
 
     ventana_libro.mainloop()
 
-def RegistroAutores(id_libro):
+def RegistroAutores():
     global ventana_autor,cajitanombre_autor,cajitaapellido_autor
 
-    ventana_libro.destroy()
+    ventana_asignacion.destroy()
 
     ventana_autor = tkinter.Tk()
     ventana_autor.geometry("300x300")
@@ -237,17 +280,17 @@ def RegistroAutores(id_libro):
     boton.grid(row=5,column=3)
     titulo.grid(row=0,column=3)
     ventana_autor.mainloop()
-    pass
 
-def AsignacionAutores():
+
+def AsignacionAutores(id_libro,cantidad):
     global ventana_asignacion, listbox1, listbox2
 
 
-    #ventana_libro.destroy()
+    ventana_libro.destroy()
 
     ventana_asignacion = tkinter.Tk()
     ventana_asignacion.title("Select")
-    ventana_asignacion.geometry('500x300')
+    ventana_asignacion.geometry('600x300')
 
     listbox1 = tkinter.Listbox(ventana_asignacion)
     listbox1.grid(row=1,column=2)
@@ -255,20 +298,13 @@ def AsignacionAutores():
 
     dao = DAO()
     a = dao.recuperarAutores()
-    #print(type(a))
     i = 0
     for y in a:
         listbox1.insert(i+1,y)
         i += 1
-
-
-
-
-
-
     
     listbox2 = tkinter.Listbox(ventana_asignacion)
-    listbox2.grid(row=1,column=6)
+    listbox2.grid(row=1,column=7)
 
 
     def item_seleccionado():
@@ -289,52 +325,53 @@ def AsignacionAutores():
     boton_asignar.grid(row=1,column=3)
 
 
+    boton_a = tkinter.Button(ventana_asignacion, text="Registrar Libro", command= AsignarAutor)
+    boton_a.grid(row=2,column=5)
 
-
-
-
-    def tuplalb2(x):
-        o = ""
-        for a in x:
-            for i in a:
-                if i != " ":
-                    o += i
-                else:
-                    break
-        print(o)
-
-    def uwu():
-        x = listbox2.get(0,tkinter.END)
-        for l in x:
-            tuplalb2(l)
-
-
-
-
-
-#WHERE NOMBRE = %S AND APELLIDO = %S
-    
-
-
-    boton_a = tkinter.Button(ventana_asignacion, text="Asignar Autor", command= uwu)
-    boton_a.grid(row=3,column=4)
+    boton_registrosne = tkinter.Button(ventana_asignacion, text="Registrar Autor", command= RegistroAutores)
+    boton_registrosne.grid(row=2,column=3)
 
     ventana_asignacion.mainloop()
 
-def RegistroPrestamo():
+def RegistroPrestamo1():
+    global ventana_prestamo, cajitarutpres
 
     ventana_menu.destroy()
 
     ventana_prestamo = tkinter.Tk()
     ventana_prestamo.geometry("300x300")
 
-    ventana_prestamo.title("Menú Opciones")
+    
+    
+    ventana_prestamo.title("Prestamos")
+    titulo = ttk.Label(ventana_prestamo,text="Prestamos")
 
-    label1 = ttk.Label(ventana_prestamo,text="Prestamos")
-    label1.grid(row=1,column=2)
+    label1 = ttk.Label(ventana_prestamo,text="Ingrese RUT")
+    label1.grid(row=3,column=2)
+
+    cajitarutpres = tkinter.Entry(ventana_prestamo)
+    cajitarutpres.grid(row=3,column=3)
 
     
-    ventana_menu.mainloop()
+    botonpres = tkinter.Button(ventana_prestamo, text="Buscar",command=RegistrarPrestamo)
+    botonpres.grid(row=5,column=3)
+
+    titulo.grid(row=0,column=3)
+    ventana_prestamo.mainloop()
+
+def RegistroPrestamo2(rut):
+
+    ventana_asignacion = tkinter.Tk()
+    ventana_asignacion.title("Select")
+    ventana_asignacion.geometry('600x300')
+
+    listboxprestamo = tkinter.Listbox(ventana_asignacion)
+    listboxprestamo.grid(row=1,column=2)
+
+    dao = DAO()
+    a = dao.recuperarUsuarios(rut)
+    label1 = ttk.Label(ventana_asignacion,text=a)
+    label1.grid(row=0,column=0)
 
 
 def Menu():
@@ -353,7 +390,7 @@ def Menu():
     boton_libro = tkinter.Button(ventana_menu, text="Registrar Libro",command=RegistroLibro)
     boton_libro.grid(row=5,column=4)
 
-    boton_asig_prestamo = tkinter.Button(ventana_menu,text="Asignar Prestamo",command=RegistroPrestamo)
+    boton_asig_prestamo = tkinter.Button(ventana_menu,text="Asignar Prestamo",command=RegistroPrestamo1)
     boton_asig_prestamo.grid(row=5,column=5)
 
     ventana_menu.mainloop()
@@ -361,14 +398,4 @@ def Menu():
 
 
 
-#dao = DAO()
-#a = dao.recuperarAutores()
-#print(type(a))
-#for y in a:
-#    print(y)
-#    break
-
-
-AsignacionAutores()
-
-#LogIn()
+LogIn()

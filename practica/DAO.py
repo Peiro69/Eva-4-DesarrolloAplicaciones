@@ -87,5 +87,35 @@ class DAO:
         self.cerrar()
         return lista
 
+    def recuperarRUTUsuarios(self):
+        self.conectar()
+        sql = "SELECT Rut FROM usuario"
+        self.__cursor.execute(sql)
+        o = self.__cursor.fetchall()
+        self.cerrar()
+        return o
+
+    def recuperarUsuarios(self,rut:str):
+        self.conectar()
+        sql = "SELECT u.IdUsuario, u.Rut, u.Nombre, u.Telefono, tu.nombre FROM usuario u, tipousuario tu WHERE tu.Id_TipoUsuario = u.Id_TipoUsuario AND u.Rut = %s"
+        values = (rut,)
+        self.__cursor.execute(sql,values)
+        o = self.__cursor.fetchall()
+        listausuario = []
+        for u in o:
+            usuario = Usuario(u[1],u[2],u[3],u[4])
+            usuario.set_id_usuario(u[0])
+            listausuario.append(usuario)
+        self.cerrar()
+        return listausuario
+
+    def recuperarAdmin(self):
+        self.conectar()
+        sql = "SELECT NombreAdmin, Password FROM administrador"
+        self.__cursor.execute(sql)
+        a = self.__cursor.fetchall()
+        return a
+
+
 
     
